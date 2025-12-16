@@ -18,9 +18,16 @@
 <body>
   <div class="quiz-box">
     <h1>Kuis Evaluasi Pemangkasan Rambut</h1>
+      <div class="student-data">
+        <label>Nama Siswa:<br><input type="text" id="nama" placeholder="Isi nama"></label><br><br>
+        <label>Nomor Absen:<br><input type="number" id="absen" placeholder="No absen"></label>
+      </div>
     <div id="quiz"></div>
     <button onclick="submitQuiz()">Selesai</button>
     <div class="result" id="result"></div>
+    <div class="result" id="status"></div>
+    <div class="result" id="feedback"></div>
+    <div class="result" id="timer"></div>
   </div>
 
   <script>
@@ -58,8 +65,25 @@
 ];
 
     const quizDiv = document.getElementById('quiz');
+const timerDiv = document.getElementById('timer');
+let timeLeft = 45 * 60; // 45 menit
 
-    questions.forEach((item, index) => {
+    function startTimer() {
+  const interval = setInterval(() => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerDiv.innerText = `Waktu tersisa: ${minutes}:${seconds.toString().padStart(2,'0')}`;
+    timeLeft--;
+    if (timeLeft < 0) {
+      clearInterval(interval);
+      submitQuiz();
+    }
+  }, 1000);
+}
+
+startTimer();
+
+questions.forEach((item, index) => {
       const qDiv = document.createElement('div');
       qDiv.innerHTML = `<div class='question'>${index + 1}. ${item.q}</div>`;
 
@@ -78,15 +102,57 @@
     });
 
     function submitQuiz() {
-      let score = 0;
-      questions.forEach((item, index) => {
-        const selected = document.querySelector(`input[name='q${index}']:checked`);
+  const nama = document.getElementById('nama').value;
+  const absen = document.getElementById('absen').value;
+  if (!nama || !absen) {
+    alert('Silakan isi Nama dan Nomor Absen terlebih dahulu');
+    return;
+  }
+  let score = 0;
+  let feedbackText = '<h3>Umpan Balik:</h3><ol>';
+
+  questions.forEach((item, index) => {
+    const selected = document.querySelector(`input[name='q${index}']:checked`);
+    if (selected && parseInt(selected.value) === item.answer) {
+      score++;
+      feedbackText += `<li>Soal ${index+1}: Benar</li>`;
+    } else {
+      feedbackText += `<li>Soal ${index+1}: Salah</li>`;
+    }
+  });
+
+  feedbackText += '</ol>';
+  const nilai = Math.round((score / questions.length) * 100);
+  const status = nilai >= 75 ? 'LULUS' : 'BELUM LULUS';
+
+  document.getElementById('result').innerText = `Skor: ${score} / ${questions.length} | Nilai: ${nilai}`;
+  document.getElementById('status').innerText = `Status: ${status}`;
+  document.getElementById('feedback').innerHTML = feedbackText;
+
+  // Simpan rekap nilai
+  const data = { nama, absen, nilai, status };
+  let rekap = JSON.parse(localStorage.getItem('rekapNilai')) || [];
+  rekap.push(data);
+  localStorage.setItem('rekapNilai', JSON.stringify(rekap));
+
+  tampilkanRekap();
+}']:checked`);
         if (selected && parseInt(selected.value) === item.answer) {
           score++;
         }
       });
       document.getElementById('result').innerText = `Skor Anda: ${score} dari ${questions.length}`;
     }
-  </script>
+  function tampilkanRekap() {
+  const rekap = JSON.parse(localStorage.getItem('rekapNilai')) || [];
+  let html = '<h3>Rekap Nilai Siswa</h3><table border="1" cellpadding="5"><tr><th>No</th><th>Nama</th><th>Absen</th><th>Nilai</th><th>Status</th></tr>';
+  rekap.forEach((r, i) => {
+    html += `<tr><td>${i+1}</td><td>${r.nama}</td><td>${r.absen}</td><td>${r.nilai}</td><td>${r.status}</td></tr>`;
+  });
+  html += '</table><br><button onclick="window.print()">Cetak Hasil Nilai</button>';
+  document.getElementById('feedback').innerHTML += html;
+}
+</script>
 </body>
 </html>
+
