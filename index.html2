@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuis Interaktif Pemangkasan Rambut</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f5f7fa; padding:20px; }
+    .quiz-box { max-width:800px; margin:auto; background:#fff; padding:25px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);} 
+    h1 { text-align:center; }
+    .question { font-weight:bold; margin-top:20px; }
+    .options label { display:block; margin:8px 0; cursor:pointer; }
+    button { margin-top:20px; padding:10px 20px; border:none; background:#2563eb; color:#fff; border-radius:8px; cursor:pointer; }
+    button:hover { background:#1e40af; }
+    .result { margin-top:20px; font-size:18px; font-weight:bold; }
+  </style>
+</head>
+<body>
+  <div class="quiz-box">
+    <h1>Kuis Evaluasi Pemangkasan Rambut</h1>
+      <div class="student-data">
+        <label>Nama Siswa:<br><input type="text" id="nama" placeholder="Isi nama"></label><br><br>
+        <label>Nomor Absen:<br><input type="number" id="absen" placeholder="No absen"></label>
+      </div>
+    <div id="quiz"></div>
+    <button onclick="submitQuiz()">Selesai</button>
+    <div class="result" id="result"></div>
+    <div class="result" id="status"></div>
+    <div class="result" id="feedback"></div>
+    <div class="result" id="timer"></div>
+  </div>
+
+  <script>
+    const questions = [
+  { q: "Secara etimologi, kata pemangkasan berasal dari kata pangkas yang artinya ...", options: ["Sisir", "Potong", "Cuci", "Tata"], answer: 1 },
+  { q: "Tujuan pemangkasan rambut berikut ini yang TIDAK tepat adalah ...", options: ["Memperindah bentuk kepala", "Mempermudah pengaturan rambut", "Membuat rambut tumbuh lebih cepat", "Memberi kesan wajah oval"], answer: 2 },
+  { q: "Sudut elevasi 0° digunakan pada teknik pemangkasan ...", options: ["Layer", "Graduasi", "Solid (Blunt Cut)", "Undercut"], answer: 2 },
+  { q: "Tekstur rambut pada gambar dinamakan ...", options: ["Activated", "Unactivated", "Nonactivated", "Inactivated"], answer: 1 },
+  { q: "Bentuk wajah yang dianggap ideal dan cocok untuk hampir semua model pangkasan adalah ...", options: ["Bulat", "Persegi", "Oval", "Segitiga"], answer: 2 },
+  { q: "Teknik pengecekan hasil pangkasan dari arah berlawanan disebut ...", options: ["Sectioning", "Cross Check", "Design Line", "Texturizing"], answer: 1 },
+  { q: "Alat khusus untuk membagi rambut (parting) adalah ...", options: ["Gunting bilah lurus", "Sisir berekor", "Clipper", "Razor"], answer: 1 },
+  { q: "Neck duster berfungsi untuk ...", options: ["Memotong rambut", "Menyisir rambut", "Membersihkan sisa rambut di leher", "Menyimpan alat"], answer: 2 },
+  { q: "Kontra indikasi yang mengharuskan penata rambut menunda layanan adalah ...", options: ["Rambut kusut", "Rambut berketombe", "Luka terbuka di kulit kepala", "Rambut kering"], answer: 2 },
+  { q: "Langkah pertama sebelum memulai pemangkasan rambut adalah ...", options: ["Memangkas rambut", "Mencuci rambut", "Konsultasi dan analisis", "Mensterilkan alat"], answer: 2 },
+  { q: "Penolakan layanan karena kurap dilakukan berdasarkan pertimbangan ...", options: ["Estetika", "K3", "Tren", "Kebiasaan salon"], answer: 1 },
+  { q: "Finger Wave termasuk penataan ...", options: ["Thermal", "Chemical", "Non-thermal", "Semi permanen"], answer: 2 },
+  { q: "Pola pangkasan yang lebih panjang di depan disebut ...", options: ["Pola datar", "Pola naik", "Pola turun", "Pola lingkar"], answer: 2 },
+  { q: "Komponen desain yang menunjukkan kepanjangan rambut adalah ...", options: ["Bentuk", "Tekstur", "Struktur", "Arah"], answer: 2 },
+  { q: "Model paling tepat untuk wajah bulat adalah ...", options: ["Blunt cut berat", "Poni tumpul", "Layer panjang vertikal", "Pendek rata samping"], answer: 2 },
+  { q: "Teknik yang perlu dihindari untuk rambut kasar dan tebal adalah ...", options: ["Layer", "Blunt cut berat", "Graduasi", "Texturizing razor"], answer: 1 },
+  { q: "Rekomendasi tepat untuk wajah persegi dan rambut tipis adalah ...", options: ["Graduasi/layer ringan", "Blunt cut bob", "Tidak dipotong", "Ikuti tren"], answer: 0 },
+  { q: "Rambut dipotong elevasi 180° disebut teknik ...", options: ["Solid", "Graduated", "Uniform layer", "Increase layer"], answer: 3 },
+  { q: "Teknik untuk hasil ringan dan dinamis adalah ...", options: ["Solid", "Graduasi gunting", "Layer gunting & razor", "Graduasi razor"], answer: 2 },
+  { q: "Manfaat postur ergonomis bagi penata rambut adalah ...", options: ["Tampil profesional", "Mencegah cedera", "Lebih cepat", "Aturan salon"], answer: 1 },
+  { q: "Kesalahan hasil uniform layer tidak rata adalah ...", options: ["Elevasi tidak konsisten", "Guide salah", "Tidak cross check", "Semua benar"], answer: 3 },
+  { q: "Jika klien takut terlihat maskulin, penata rambut sebaiknya ...", options: ["Menolak", "Memberi rekomendasi feminin", "Langsung potong", "Tidak memotong"], answer: 1 },
+  { q: "Perawatan gunting yang benar adalah ...", options: ["Disimpan", "Dibersihkan & dilumasi", "Dicuci air", "Direndam"], answer: 1 },
+  { q: "Tujuan saran pasca pelayanan adalah ...", options: ["Menjual produk", "Menjaga hasil & kesehatan rambut", "Agar kembali cepat", "Formalitas"], answer: 1 },
+  { q: "Foto before-after efektif menampilkan ...", options: ["Harga", "Transformasi keahlian", "Lokasi", "Produk"], answer: 1 },
+  { q: "Platform terbaik untuk portofolio visual adalah ...", options: ["LinkedIn", "Facebook", "Instagram", "Twitter"], answer: 2 },
+  { q: "Strategi digital paling efektif untuk layanan pewarnaan adalah ...", options: ["Foto hitam putih", "Video transformasi warna", "Promo harga", "Foto salon"], answer: 1 },
+  { q: "Personal branding yang kurang baik adalah ...", options: ["Konsisten", "Interaksi", "Konten tidak relevan", "Hashtag"], answer: 2 },
+  { q: "Strategi Instagram paling efektif adalah ...", options: ["Beli followers", "Foto tanpa caption", "Konten berkualitas & interaksi", "Unggah semua"], answer: 2 },
+  { q: "Video timelapse before-after di TikTok disebut ...", options: ["A-Roll", "B-Roll", "Tutorial", "Vlog"], answer: 1 }
+];
+
+    const quizDiv = document.getElementById('quiz');
+const timerDiv = document.getElementById('timer');
+let timeLeft = 45 * 60; // 45 menit
+
+    function startTimer() {
+  const interval = setInterval(() => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerDiv.innerText = `Waktu tersisa: ${minutes}:${seconds.toString().padStart(2,'0')}`;
+    timeLeft--;
+    if (timeLeft < 0) {
+      clearInterval(interval);
+      submitQuiz();
+    }
+  }, 1000);
+}
+
+startTimer();
+
+questions.forEach((item, index) => {
+      const qDiv = document.createElement('div');
+      qDiv.innerHTML = `<div class='question'>${index + 1}. ${item.q}</div>`;
+
+      const optDiv = document.createElement('div');
+      optDiv.className = 'options';
+
+      item.options.forEach((opt, i) => {
+        optDiv.innerHTML += `
+          <label>
+            <input type="radio" name="q${index}" value="${i}" /> ${opt}
+          </label>`;
+      });
+
+      quizDiv.appendChild(qDiv);
+      quizDiv.appendChild(optDiv);
+    });
+
+    function submitQuiz() {
+  const nama = document.getElementById('nama').value;
+  const absen = document.getElementById('absen').value;
+  if (!nama || !absen) {
+    alert('Silakan isi Nama dan Nomor Absen terlebih dahulu');
+    return;
+  }
+  let score = 0;
+  let feedbackText = '<h3>Umpan Balik:</h3><ol>';
+
+  questions.forEach((item, index) => {
+    const selected = document.querySelector(`input[name='q${index}']:checked`);
+    if (selected && parseInt(selected.value) === item.answer) {
+      score++;
+      feedbackText += `<li>Soal ${index+1}: Benar</li>`;
+    } else {
+      feedbackText += `<li>Soal ${index+1}: Salah</li>`;
+    }
+  });
+
+  feedbackText += '</ol>';
+  const nilai = Math.round((score / questions.length) * 100);
+  const status = nilai >= 75 ? 'LULUS' : 'BELUM LULUS';
+
+  document.getElementById('result').innerText = `Skor: ${score} / ${questions.length} | Nilai: ${nilai}`;
+  document.getElementById('status').innerText = `Status: ${status}`;
+  document.getElementById('feedback').innerHTML = feedbackText;
+
+  // Simpan rekap nilai
+  const data = { nama, absen, nilai, status };
+  let rekap = JSON.parse(localStorage.getItem('rekapNilai')) || [];
+  rekap.push(data);
+  localStorage.setItem('rekapNilai', JSON.stringify(rekap));
+
+  tampilkanRekap();
+}']:checked`);
+        if (selected && parseInt(selected.value) === item.answer) {
+          score++;
+        }
+      });
+      document.getElementById('result').innerText = `Skor Anda: ${score} dari ${questions.length}`;
+    }
+  function tampilkanRekap() {
+  const rekap = JSON.parse(localStorage.getItem('rekapNilai')) || [];
+  let html = '<h3>Rekap Nilai Siswa</h3><table border="1" cellpadding="5"><tr><th>No</th><th>Nama</th><th>Absen</th><th>Nilai</th><th>Status</th></tr>';
+  rekap.forEach((r, i) => {
+    html += `<tr><td>${i+1}</td><td>${r.nama}</td><td>${r.absen}</td><td>${r.nilai}</td><td>${r.status}</td></tr>`;
+  });
+  html += '</table><br><button onclick="window.print()">Cetak Hasil Nilai</button>';
+  document.getElementById('feedback').innerHTML += html;
+}
+</script>
+</body>
+</html>
