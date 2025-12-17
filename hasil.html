@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Hasil Ujian</title>
+</head>
+<body>
+
+<h2>Hasil Evaluasi</h2>
+
+<p>Nama: <b id="nama"></b></p>
+<p>Absen: <b id="absen"></b></p>
+<p>Nilai: <b id="nilai"></b></p>
+<p>Status: <b id="status"></b></p>
+
+<button onclick="window.print()">Cetak Hasil</button>
+
+<script>
+document.getElementById("nama").innerText = localStorage.getItem("nama");
+document.getElementById("absen").innerText = localStorage.getItem("absen");
+document.getElementById("nilai").innerText = localStorage.getItem("nilai");
+document.getElementById("status").innerText = localStorage.getItem("status");
+</script>
+
+</body>
+</html>
