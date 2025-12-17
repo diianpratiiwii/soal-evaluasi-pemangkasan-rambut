@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Pemangkasan Rambut</title>
+<style>
+body{font-family:Arial;background:#f5f7fa;padding:20px}
+.box{max-width:900px;margin:auto;background:#fff;padding:25px;border-radius:10px}
+.question{font-weight:bold;margin-top:20px}
+.options label{display:block;margin:6px 0}
+button{margin-top:25px;padding:12px 20px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer}
+#timer{font-weight:bold;color:#b91c1c}
+</style>
+</head>
+
+<body>
+<div class="box">
+<h2>Kuis Evaluasi Pemangkasan Rambut</h2>
+<p id="timer"></p>
+
+<div id="quiz"></div>
+
+<button onclick="submitQuiz()">Selesai</button>
+</div>
+
+<script>
+const questions = [
+{q:"Secara etimologi, kata pemangkasan berasal dari kata pangkas yang artinya ...",options:["Sisir","Potong","Cuci","Tata"],answer:1},
+{q:"Tujuan pemangkasan rambut yang TIDAK tepat adalah ...",options:["Memperindah bentuk kepala","Mempermudah penataan","Membuat rambut tumbuh lebih cepat","Memberi kesan oval"],answer:2},
+{q:"Sudut elevasi 0° digunakan pada teknik ...",options:["Layer","Graduasi","Solid","Undercut"],answer:2},
+{q:"Bentuk wajah yang paling ideal adalah ...",options:["Bulat","Persegi","Oval","Segitiga"],answer:2},
+{q:"Teknik pengecekan hasil pangkasan disebut ...",options:["Sectioning","Cross check","Design line","Texturizing"],answer:1},
+{q:"Alat untuk membagi rambut (parting) adalah ...",options:["Gunting","Sisir berekor","Clipper","Razor"],answer:1},
+{q:"Neck duster berfungsi untuk ...",options:["Memotong rambut","Menyisir","Membersihkan sisa rambut","Menyimpan alat"],answer:2},
+{q:"Kontra indikasi layanan pemangkasan adalah ...",options:["Rambut kusut","Ketombe","Luka terbuka","Rambut kering"],answer:2},
+{q:"Langkah awal sebelum pemangkasan rambut adalah ...",options:["Memotong","Mencuci","Konsultasi","Menata"],answer:2},
+{q:"Finger wave termasuk penataan ...",options:["Thermal","Chemical","Non-thermal","Semi permanen"],answer:2},
+
+{q:"Pola pangkasan lebih panjang di depan disebut ...",options:["Datar","Naik","Turun","Lingkar"],answer:2},
+{q:"Komponen desain yang menunjukkan panjang rambut adalah ...",options:["Bentuk","Tekstur","Struktur","Arah"],answer:2},
+{q:"Model tepat untuk wajah bulat adalah ...",options:["Blunt cut","Poni tumpul","Layer panjang","Pendek rata"],answer:2},
+{q:"Teknik yang dihindari pada rambut kasar dan tebal adalah ...",options:["Layer","Blunt cut berat","Graduasi","Razor"],answer:1},
+{q:"Elevasi 180° disebut teknik ...",options:["Solid","Graduated","Uniform","Increase layer"],answer:3},
+{q:"Manfaat postur ergonomis adalah ...",options:["Profesional","Mencegah cedera","Cepat","Aturan"],answer:1},
+{q:"Kesalahan uniform layer tidak rata disebabkan oleh ...",options:["Elevasi tidak konsisten","Guide salah","Tidak cross check","Semua benar"],answer:3},
+{q:"Jika klien takut terlihat maskulin, sebaiknya ...",options:["Menolak","Rekomendasi feminin","Langsung potong","Tidak memotong"],answer:1},
+{q:"Perawatan gunting yang benar adalah ...",options:["Disimpan","Dibersihkan dan dilumasi","Dicuci air","Direndam"],answer:1},
+{q:"Tujuan saran pasca pelayanan adalah ...",options:["Menjual produk","Menjaga hasil","Agar kembali","Formalitas"],answer:1},
+
+{q:"Foto before–after berfungsi untuk ...",options:["Harga","Transformasi keahlian","Lokasi","Produk"],answer:1},
+{q:"Media terbaik untuk portofolio visual adalah ...",options:["LinkedIn","Facebook","Instagram","Twitter"],answer:2},
+{q:"Strategi promosi pewarnaan paling efektif adalah ...",options:["Foto hitam putih","Video transformasi","Promo harga","Foto salon"],answer:1},
+{q:"Personal branding yang kurang baik adalah ...",options:["Konsisten","Interaksi","Konten tidak relevan","Hashtag"],answer:2},
+{q:"Strategi Instagram paling efektif adalah ...",options:["Beli followers","Tanpa caption","Konten berkualitas","Unggah semua"],answer:2},
+{q:"Video timelapse before–after di TikTok disebut ...",options:["A-roll","B-roll","Tutorial","Vlog"],answer:1},
+{q:"Tujuan dokumentasi hasil kerja adalah ...",options:["Pamer","Arsip","Portofolio","Semua benar"],answer:3},
+{q:"E-portfolio bermanfaat untuk ...",options:["Penilaian","Promosi","Refleksi","Semua benar"],answer:3},
+{q:"Platform e-portfolio berbasis website adalah ...",options:["WhatsApp","Google Sites","Telegram","Email"],answer:1}
+];
+
+const quizDiv = document.getElementById("quiz");
+questions.forEach((item,i)=>{
+  let html = `<div class="question">${i+1}. ${item.q}</div><div class="options">`;
+  item.options.forEach((opt,j)=>{
+    html += `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`;
+  });
+  html += `</div>`;
+  quizDiv.innerHTML += html;
+});
+
+// TIMER 45 MENIT
+let timeLeft = 45*60;
+setInterval(()=>{
+  let m = Math.floor(timeLeft/60);
+  let s = timeLeft%60;
+  document.getElementById("timer").innerText =
+    "Sisa waktu: "+m+":"+s.toString().padStart(2,"0");
+  timeLeft--;
+  if(timeLeft<0) submitQuiz();
+},1000);
+
+// SUBMIT QUIZ
+function submitQuiz(){
+  let score = 0;
+  questions.forEach((q,i)=>{
+    let a = document.querySelector(`input[name="q${i}"]:checked`);
+    if(a && Number(a.value)===q.answer) score++;
+  });
+
+  let nilai = Math.round(score/questions.length*100);
+  let status = nilai>=75 ? "LULUS" : "BELUM LULUS";
+
+  localStorage.setItem("nilai", nilai);
+  localStorage.setItem("status", status);
+
+  window.location.href = "hasil.html";
+}
+</script>
+</body>
+</html>
