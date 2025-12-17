@@ -135,14 +135,6 @@ questions.forEach((item, index) => {
   rekap.push(data);
   localStorage.setItem('rekapNilai', JSON.stringify(rekap));
 
-  tampilkanRekap();
-}']:checked`);
-        if (selected && parseInt(selected.value) === item.answer) {
-          score++;
-        }
-      });
-      document.getElementById('result').innerText = `Skor Anda: ${score} dari ${questions.length}`;
-    }
   function tampilkanRekap() {
   const rekap = JSON.parse(localStorage.getItem('rekapNilai')) || [];
   let html = '<h3>Rekap Nilai Siswa</h3><table border="1" cellpadding="5"><tr><th>No</th><th>Nama</th><th>Absen</th><th>Nilai</th><th>Status</th></tr>';
